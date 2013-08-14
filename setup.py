@@ -20,12 +20,13 @@ setup(
     install_requires=[
         'six',
         'distribute',
+        'pysignals',
     ],
     setup_requires = [
         'versiontools >= 1.8',
     ],
     test_suite = 'nose.collector',
-    tests_require = ['nose >= 1.2.1', 'mock >= 1.0.1'],
+    tests_require = ['nose >= 1.2.1', 'mock >= 1.0.1', 'pysignals'],
     classifiers = [
         "Programming Language :: Python",
         'Development Status :: 4 - Beta',

@@ -1,17 +1,14 @@
-import os
 import unittest
 import warnings
 
-from pysettings import settings, global_settings
-from pysettings.exceptions import ImproperlyConfigured
-from django.http import HttpRequest
-from django.test import SimpleTestCase, TransactionTestCase, TestCase, signals
-from django.test.utils import override_settings
+from pysettings import signals
+from pysettings.conf import settings
+from pysettings.decorators import override_settings
 import six
 
 
 @override_settings(TEST='override', TEST_OUTER='outer')
-class FullyDecoratedTranTestCase(TransactionTestCase):
+class FullyDecoratedTranTestCase(unittest.TestCase):
 
     available_apps = []
 
@@ -32,7 +29,7 @@ class FullyDecoratedTranTestCase(TransactionTestCase):
 
 
 @override_settings(TEST='override')
-class FullyDecoratedTestCase(TestCase):
+class FullyDecoratedTestCase(unittest.TestCase):
 
     def test_override(self):
         self.assertEqual(settings.TEST, 'override')
@@ -42,7 +39,7 @@ class FullyDecoratedTestCase(TestCase):
         self.assertEqual(settings.TEST, 'override2')
 
 
-class ClassDecoratedTestCaseSuper(TestCase):
+class ClassDecoratedTestCaseSuper(unittest.TestCase):
     """
     Dummy class for testing max recursion error in child class call to
     super().  Refs #17011.
@@ -73,7 +70,7 @@ class ClassDecoratedTestCase(ClassDecoratedTestCaseSuper):
             self.fail()
 
 
-class SettingsTests(TestCase):
+class SettingsTests(unittest.TestCase):
     def setUp(self):
         self.testvalue = None
         signals.setting_changed.connect(self.signal_callback)
@@ -121,22 +118,6 @@ class SettingsTests(TestCase):
         self.assertEqual('override', settings.TEST)
         override.disable()
         self.assertRaises(AttributeError, getattr, settings, 'TEST')
-
-    def test_class_decorator(self):
-        # SimpleTestCase can be decorated by override_settings, but not ut.TestCase
-        class SimpleTestCaseSubclass(SimpleTestCase):
-            pass
-
-        class UnittestTestCaseSubclass(unittest.TestCase):
-            pass
-
-        decorated = override_settings(TEST='override')(SimpleTestCaseSubclass)
-        self.assertIsInstance(decorated, type)
-        self.assertTrue(issubclass(decorated, SimpleTestCase))
-
-        with six.assertRaisesRegex(self, Exception,
-                "Only subclasses of Django SimpleTestCase*"):
-            decorated = override_settings(TEST='override')(UnittestTestCaseSubclass)
 
     def test_signal_callback_context_manager(self):
         self.assertRaises(AttributeError, getattr, settings, 'TEST')
@@ -193,26 +174,3 @@ class SettingsTests(TestCase):
 
         self.assertRaises(AttributeError, getattr, settings, 'TEST')
         self.assertRaises(AttributeError, getattr, settings, 'TEST2')
-
-
-class TestComplexSettingOverride(TestCase):
-    def setUp(self):
-        self.old_warn_override_settings = signals.COMPLEX_OVERRIDE_SETTINGS.copy()
-        signals.COMPLEX_OVERRIDE_SETTINGS.add('TEST_WARN')
-
-    def tearDown(self):
-        signals.COMPLEX_OVERRIDE_SETTINGS = self.old_warn_override_settings
-        self.assertFalse('TEST_WARN' in signals.COMPLEX_OVERRIDE_SETTINGS)
-
-    def test_complex_override_warning(self):
-        """Regression test for #19031"""
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter("always")
-
-            override = override_settings(TEST_WARN='override')
-            override.enable()
-            self.assertEqual('override', settings.TEST_WARN)
-            override.disable()
-
-            self.assertEqual(len(w), 1)
-            self.assertEqual('Overriding setting TEST_WARN can lead to unexpected behaviour.', str(w[-1].message))
