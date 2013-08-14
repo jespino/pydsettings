@@ -41,7 +41,6 @@ class LazySettings(LazyObject):
                 % (desc, ENVIRONMENT_VARIABLE))
 
         self._wrapped = Settings(settings_module)
-        self._configure_logging()
 
     def __getattr__(self, name):
         if self._wrapped is empty:
@@ -60,7 +59,6 @@ class LazySettings(LazyObject):
         for name, value in options.items():
             setattr(holder, name, value)
         self._wrapped = holder
-        self._configure_logging()
 
     @property
     def configured(self):

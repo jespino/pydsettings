@@ -6,6 +6,8 @@ from pysettings.conf import settings
 from pysettings.decorators import override_settings
 import six
 
+settings.configure()
+
 
 @override_settings(TEST='override', TEST_OUTER='outer')
 class FullyDecoratedTranTestCase(unittest.TestCase):
@@ -85,7 +87,7 @@ class SettingsTests(unittest.TestCase):
     def test_override(self):
         settings.TEST = 'test'
         self.assertEqual('test', settings.TEST)
-        with self.settings(TEST='override'):
+        with override_settings(TEST='override'):
             self.assertEqual('override', settings.TEST)
         self.assertEqual('test', settings.TEST)
         del settings.TEST
@@ -93,7 +95,7 @@ class SettingsTests(unittest.TestCase):
     def test_override_change(self):
         settings.TEST = 'test'
         self.assertEqual('test', settings.TEST)
-        with self.settings(TEST='override'):
+        with override_settings(TEST='override'):
             self.assertEqual('override', settings.TEST)
             settings.TEST = 'test2'
         self.assertEqual('test', settings.TEST)
@@ -101,7 +103,7 @@ class SettingsTests(unittest.TestCase):
 
     def test_override_doesnt_leak(self):
         self.assertRaises(AttributeError, getattr, settings, 'TEST')
-        with self.settings(TEST='override'):
+        with override_settings(TEST='override'):
             self.assertEqual('override', settings.TEST)
             settings.TEST = 'test'
         self.assertRaises(AttributeError, getattr, settings, 'TEST')
@@ -121,7 +123,7 @@ class SettingsTests(unittest.TestCase):
 
     def test_signal_callback_context_manager(self):
         self.assertRaises(AttributeError, getattr, settings, 'TEST')
-        with self.settings(TEST='override'):
+        with override_settings(TEST='override'):
             self.assertEqual(self.testvalue, 'override')
         self.assertEqual(self.testvalue, None)
 
@@ -146,11 +148,11 @@ class SettingsTests(unittest.TestCase):
         """
         Allow deletion of a setting in an overridden settings set (#18824)
         """
-        previous_i18n = settings.USE_I18N
-        with self.settings(USE_I18N=False):
-            del settings.USE_I18N
-            self.assertRaises(AttributeError, getattr, settings, 'USE_I18N')
-        self.assertEqual(settings.USE_I18N, previous_i18n)
+        settings.TEST = 'test'
+        with override_settings(TEST=False):
+            del settings.TEST
+            self.assertRaises(AttributeError, getattr, settings, 'TEST')
+        self.assertEqual(settings.TEST, 'test')
 
     def test_override_settings_nested(self):
         """
