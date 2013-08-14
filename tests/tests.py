@@ -8,7 +8,6 @@ import six
 
 settings.configure()
 
-
 @override_settings(TEST='override', TEST_OUTER='outer')
 class FullyDecoratedTranTestCase(unittest.TestCase):
 
@@ -153,6 +152,7 @@ class SettingsTests(unittest.TestCase):
             del settings.TEST
             self.assertRaises(AttributeError, getattr, settings, 'TEST')
         self.assertEqual(settings.TEST, 'test')
+        del settings.TEST
 
     def test_override_settings_nested(self):
         """
