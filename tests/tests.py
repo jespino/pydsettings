@@ -1,9 +1,9 @@
 import unittest
 import warnings
 
-from pysettings import signals
-from pysettings.conf import settings
-from pysettings.decorators import override_settings
+from pydsettings import signals
+from pydsettings.conf import settings
+from pydsettings.decorators import override_settings
 import six
 
 settings.configure()

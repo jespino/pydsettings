@@ -9,9 +9,9 @@ a list of all possible variables.
 import importlib
 import os
 
-from pysettings import empty
-from pysettings.exceptions import ImproperlyConfigured
-from pysettings.utils.functional import LazyObject, empty
+from pydsettings import empty
+from pydsettings.exceptions import ImproperlyConfigured
+from pydsettings.utils.functional import LazyObject, empty
 
 ENVIRONMENT_VARIABLE = "PYCONF_MODULE"
 global_settings = empty

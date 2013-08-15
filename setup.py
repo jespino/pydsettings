@@ -5,14 +5,14 @@ import os
 from setuptools import setup, find_packages
 
 setup(
-    name = 'pysettings',
-    version = ":versiontools:pysettings:",
+    name = 'pydsettings',
+    version = ":versiontools:pydsettings:",
     description = "Python generic storage abstraction library",
     long_description = "",
     keywords = 'data, storage',
     author = 'Jesús Espino García',
     author_email = 'jespinog@gmail.com',
-    url = 'https://github.com/jespino/pysettings',
+    url = 'https://github.com/jespino/pydsettings',
     license = 'BSD',
     include_package_data = True,
     packages = find_packages(),
@@ -20,13 +20,13 @@ setup(
     install_requires=[
         'six',
         'distribute',
-        'pysignals',
+        'pydsignals',
     ],
     setup_requires = [
         'versiontools >= 1.8',
     ],
     test_suite = 'nose.collector',
-    tests_require = ['nose >= 1.2.1', 'mock >= 1.0.1', 'pysignals'],
+    tests_require = ['nose >= 1.2.1', 'mock >= 1.0.1', 'pydsignals'],
     classifiers = [
         "Programming Language :: Python",
         'Development Status :: 4 - Beta',

@@ -1,6 +1,6 @@
 from functools import wraps
-from pysettings.conf import settings, UserSettingsHolder
-from pysettings.signals import setting_changed
+from pydsettings.conf import settings, UserSettingsHolder
+from pydsettings.signals import setting_changed
 
 
 class override_settings(object):
